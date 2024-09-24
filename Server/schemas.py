@@ -1,7 +1,18 @@
-from app import ma
-from models import Fruit
+from models import User, Product, Order, OrderItem
+from database import ma
 
-class FruitSchema(ma.SQLAlchemyAutoSchema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Fruit
-        load_instance = True
+        model = User
+
+class ProductSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Product
+
+class OrderSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Order
+
+class OrderItemSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = OrderItem
