@@ -1,28 +1,19 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask_cors import CORS
-from config import Config
-from routes import fruits_bp
-from auth import auth_bp
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
 
-# Initialize app
 app = Flask(__name__)
+app.config.from_object('config.Config')
 
-# Load configuration
-app.config.from_object(Config)
-
-# Initialize CORS, database, and marshmallow for serialization
-CORS(app)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 
-def create_app():
-    from routes import fruits_bp
-    app.register_blueprint(fruits_bp)
-    return app
+from routes import init_routes
+init_routes(app)
 
-# Main entry point
-if __name__ == '__main__':
-    app = create_app()
+if __name__ == "__main__":
     app.run(debug=True)
