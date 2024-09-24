@@ -12,13 +12,15 @@ from flask_login import (
 from models import db, User, Product, Order, OrderItem
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+
 app = Flask(__name__)
 
 # Enable CORS for cross-origin requests
 CORS(app)
 
 # Database configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://your_user:your_password@localhost/vegetables"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://william:TheNyongess!!11@localhost/fruits"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "your_secret_key"
 
@@ -39,7 +41,7 @@ def load_user(user_id):
 # Index route
 class Index(Resource):
     def get(self):
-        return {"message": "Welcome to the Vegetable Shopping App!"}
+        return {"message": "Welcome to the Farm Shopping App!"}
 
 # User resource
 class UserResource(Resource):
@@ -115,17 +117,21 @@ class OrderResource(Resource):
         return {"message": "Order created successfully"}, 201
 
 # Register resource
-class Register(Resource):
+class RegisterResource(Resource):
     def post(self):
         data = request.get_json()
-        if User.query.filter_by(username=data["username"]).first():
-            return {"message": "User already exists"}, 400
-
-        hashed_password = generate_password_hash(data["password"], method="sha256")
-        user = User(username=data["username"], email=data["email"], password=hashed_password)
-        db.session.add(user)
+        hashed_password = generate_password_hash(data["password"], method="pbkdf2:sha256")
+        # Create a new user instance
+        new_user = User(username=data["username"], email=data["email"], password=hashed_password)
+        # Add the user to the database
+        db.session.add(new_user)
         db.session.commit()
-        return {"message": "User created successfully"}, 201
+        return {"message": "User registered successfully"}, 201
+
+
+
+
+
 
 # Login resource
 class Login(Resource):
@@ -154,10 +160,10 @@ api.add_resource(Index, "/")
 api.add_resource(UserResource, "/users", "/user/<int:user_id>")
 api.add_resource(ProductResource, "/products", "/product/<int:product_id>")
 api.add_resource(OrderResource, "/orders", "/order/<int:order_id>")
-api.add_resource(Register, "/register")
+api.add_resource(RegisterResource, "/register")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 
 # Run the application
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=3001, debug=True)
